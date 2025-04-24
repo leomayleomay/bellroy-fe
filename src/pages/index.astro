@@ -1,0 +1,19 @@
+---
+import Application from "../layouts/Application.astro";
+---
+
+<Application title="Bellroy Product">
+  <div id="app"></div>
+  <script>
+    // Load Main.js to define global Elm object
+    const script = document.createElement("script");
+    script.src = "/Main.js";
+    script.onload = () => {
+      // Initialize Elm after script loads
+      Elm.Main.init({
+        node: document.getElementById("app"),
+      });
+    };
+    document.head.appendChild(script);
+  </script>
+</Application>

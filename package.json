@@ -1,0 +1,14 @@
+{
+  "name": "bellroy-products",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "elm make src/Main.elm --output=public/Main.js && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.7.5"
+  }
+}

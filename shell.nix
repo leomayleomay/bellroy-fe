@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> {} }:
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    just
+    nodejs
     elmPackages.elm
     elmPackages.elm-format
   ];

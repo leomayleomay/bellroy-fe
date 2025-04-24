@@ -1,2 +1,5 @@
+/dist
+/.astro
 /elm-stuff
-/Main.js
+/node_modules
+/public/Main.js
