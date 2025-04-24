@@ -1,4 +1,5 @@
 ```
+nix-shell # ignore this step if you don't use nix
 elm make src/Main.elm
 elm reactor
 ```
