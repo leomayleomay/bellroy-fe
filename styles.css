@@ -1,0 +1,58 @@
+/* Ensure the grid has multiple columns on larger screens */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+/* Style each card */
+.card {
+  padding: 1.5rem;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content, including image */
+}
+
+/* Hover effect for clickable cards */
+.card-link:hover .card {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style product image */
+.product-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem; /* Rounded corners for a polished look */
+}
+
+/* Hover effect for cards */
+.card:hover {
+  transform: translateY(-0.25rem);
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+/* Error state */
+.error {
+  background-color: #ffe6e6;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+/* Single column on small screens */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

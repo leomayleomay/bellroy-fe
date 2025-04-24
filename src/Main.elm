@@ -1,10 +1,13 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (div, text)
+import Html exposing (a, article, button, div, h1, h2, img, p, span, text)
+import Html.Attributes exposing (alt, class, href, rel, src, target)
+import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, int, string)
 import RemoteData exposing (RemoteData(..))
+import String exposing (toUpper)
 
 
 type alias Price =
@@ -70,7 +73,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { products = NotAsked }
+    ( { products = Loading }
     , fetchProducts
     )
 
@@ -85,6 +88,7 @@ fetchProducts =
 
 type Msg
     = GotProducts (RemoteData Http.Error (List Product))
+    | Retry
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -92,6 +96,9 @@ update msg model =
     case msg of
         GotProducts remoteData ->
             ( { model | products = remoteData }, Cmd.none )
+
+        Retry ->
+            ( { model | products = Loading }, fetchProducts )
 
 
 main : Program () Model Msg
@@ -123,27 +130,62 @@ httpErrorToString error =
             "Unexpected response: " ++ message
 
 
+productImageUrl : Product -> String
+productImageUrl product =
+    "https://bellroy-product-images.imgix.net/bellroy_dot_com_range_page_image/"
+        ++ toUpper product.price.currencyCode
+        ++ "/"
+        ++ product.sku
+        ++ "/0?auto=format&fit=max&w=160"
+
+
 view : Model -> Html.Html Msg
 view model =
-    case model.products of
-        NotAsked ->
-            text "Products not requested yet"
+    div []
+        [ h1 [] [ text "Bellroy Products" ]
+        , case model.products of
+            NotAsked ->
+                p [] [ text "Products not requested yet." ]
 
-        Loading ->
-            text "Loading products..."
+            Loading ->
+                div [ class "loading" ]
+                    [ span [ class "spinner" ] []
+                    , text " Loading products..."
+                    ]
 
-        Failure err ->
-            text ("Error: " ++ httpErrorToString err)
+            Failure err ->
+                article [ class "error" ]
+                    [ p [] [ text ("Error: " ++ httpErrorToString err) ]
+                    , button [ onClick Retry ] [ text "Retry" ]
+                    ]
 
-        Success products ->
-            div []
-                (List.map
-                    (\product ->
-                        div []
-                            [ text product.name
-                            , text (" - SKU: " ++ product.sku)
-                            , text (" - Price: " ++ product.price.currencyCode ++ " " ++ String.fromFloat (toFloat product.price.priceInCents / 100))
-                            ]
-                    )
-                    products
-                )
+            Success products ->
+                if List.isEmpty products then
+                    p [] [ text "No products found." ]
+
+                else
+                    div [ class "grid" ]
+                        (List.map
+                            (\product ->
+                                a
+                                    [ href ("https://bellroy.com/" ++ product.canonicalUri)
+                                    , target "_blank"
+                                    , rel "noopener noreferrer"
+                                    , class "card-link"
+                                    ]
+                                    [ article [ class "card" ]
+                                        [ img
+                                            [ src (productImageUrl product)
+                                            , alt ("Image of " ++ product.name)
+                                            , class "product-image"
+                                            ]
+                                            []
+                                        , h2 [] [ text product.name ]
+                                        , p [] [ text ("SKU: " ++ product.sku) ]
+                                        , p [] [ text ("Price: " ++ toUpper product.price.currencyCode ++ " $" ++ String.fromFloat (toFloat product.price.priceInCents / 100)) ]
+                                        ]
+                                    ]
+                            )
+                            products
+                        )
+        ]
