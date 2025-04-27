@@ -68,12 +68,12 @@ productsDecoder =
 
 
 type alias Model =
-    { products : RemoteData Http.Error (List Product) }
+    RemoteData Http.Error (List Product)
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { products = Loading }
+    ( Loading
     , fetchProducts
     )
 
@@ -92,13 +92,13 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update msg _ =
     case msg of
         GotProducts remoteData ->
-            ( { model | products = remoteData }, Cmd.none )
+            ( remoteData, Cmd.none )
 
         Retry ->
-            ( { model | products = Loading }, fetchProducts )
+            ( Loading, fetchProducts )
 
 
 main : Program () Model Msg
@@ -143,7 +143,7 @@ view : Model -> Html.Html Msg
 view model =
     div []
         [ h1 [] [ text "Bellroy Products" ]
-        , case model.products of
+        , case model of
             NotAsked ->
                 p [] [ text "Products not requested yet." ]
 
