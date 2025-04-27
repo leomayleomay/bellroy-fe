@@ -6,6 +6,7 @@ import Html.Attributes exposing (alt, class, href, rel, src, target)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, int, string)
+import Json.Decode.Pipeline exposing (required)
 import RemoteData exposing (RemoteData(..))
 import String exposing (toUpper)
 
@@ -20,11 +21,11 @@ type alias Price =
 
 priceDecoder : Decoder Price
 priceDecoder =
-    Decode.map4 Price
-        (field "channel" string)
-        (field "currency_code" string)
-        (field "price_in_cents" int)
-        (field "price_role_identifier" string)
+    Decode.succeed Price
+        |> required "channel" string
+        |> required "currency_code" string
+        |> required "price_in_cents" int
+        |> required "price_role_identifier" string
 
 
 type alias Dimensions =
@@ -53,13 +54,13 @@ type alias Product =
 
 productDecoder : Decoder Product
 productDecoder =
-    Decode.map6 Product
-        (field "id" string)
-        (field "attributes" (field "name" string))
-        (field "attributes" (field "sku" string))
-        (field "attributes" (field "barcode" string))
-        (field "attributes" (field "canonical_uri" string))
-        (field "attributes" (field "price" priceDecoder))
+    Decode.succeed Product
+        |> required "id" string
+        |> required "attributes" (field "name" string)
+        |> required "attributes" (field "sku" string)
+        |> required "attributes" (field "barcode" string)
+        |> required "attributes" (field "canonical_uri" string)
+        |> required "attributes" (field "price" priceDecoder)
 
 
 productsDecoder : Decoder (List Product)
