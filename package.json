@@ -10,5 +10,10 @@
   },
   "dependencies": {
     "astro": "^5.7.5"
+  },
+  "devDependencies": {
+    "elm": "^0.19.1-6",
+    "elm-format": "^0.8.7",
+    "elm-review": "^2.13.2"
   }
 }

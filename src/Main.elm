@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Browser
 import Html exposing (a, article, button, div, h1, h2, img, p, span, text)
@@ -26,20 +26,6 @@ priceDecoder =
         |> required "currency_code" string
         |> required "price_in_cents" int
         |> required "price_role_identifier" string
-
-
-type alias Dimensions =
-    { color : List String
-    , material : List String
-    , size : List String
-    , productType : List String
-    , productSubType : List String
-    , webCollection : List String
-    , webPrimarySubCategory : String
-    , netWeightG : String
-    , productVolumeMl : String
-    , warrantyYears : String
-    }
 
 
 type alias Product =

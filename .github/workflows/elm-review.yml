@@ -1,0 +1,42 @@
+name: Elm Review
+
+on:
+  pull_request:
+    branches:
+      - main # Adjust to your default branch (e.g., master, develop)
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write # Required for elm-review-action to write to GitHub Checks API
+
+    steps:
+      # Check out the repository code
+      - uses: actions/checkout@v4
+
+      # Set up Node.js (required for yarn/npm to install elm-review dependencies)
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Use a Node.js version compatible with your setup
+
+      # Install dependencies (assumes elm-review, elm, and elm-format are in package.json)
+      - run: yarn --frozen-lockfile # Or use `npm install` if you use npm
+
+      # Add elm-review, elm, and elm-format to PATH
+      - name: Add Elm tools to PATH
+        run: yarn bin >> $GITHUB_PATH
+
+      # Run elm-review using the elm-review-action
+      - uses: sparksp/elm-review-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for Checks API
+        with:
+          name: elm-review # Optional: Customize the check name
+          elm_review: elm-review # Optional: Path to elm-review binary
+          elm_format: elm-format # Optional: Path to elm-format binary
+          elm_compiler: elm # Optional: Path to elm compiler
+          elm_json: elm.json # Optional: Path to elm.json
+          elm_review_config: review # Optional: Path to elm-review config folder
+          elm_files: | # Optional: Specify files to review
+            src/
