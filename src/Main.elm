@@ -4,6 +4,8 @@ import Browser
 import Html exposing (a, article, button, div, h1, h2, img, p, span, text)
 import Html.Attributes exposing (alt, class, href, rel, src, target)
 import Html.Events exposing (onClick)
+import Html.Keyed as Keyed
+import Html.Lazy exposing (lazy)
 import Http
 import Json.Decode as Decode exposing (Decoder, field, int, string)
 import Json.Decode.Pipeline exposing (required)
@@ -126,6 +128,33 @@ productImageUrl product =
         ++ "/0?auto=format&fit=max&w=160"
 
 
+viewProduct : Product -> Html.Html Msg
+viewProduct product =
+    a
+        [ href ("https://bellroy.com/" ++ product.canonicalUri)
+        , target "_blank"
+        , rel "noopener noreferrer"
+        , class "card-link"
+        ]
+        [ article [ class "card" ]
+            [ img
+                [ src (productImageUrl product)
+                , alt ("Image of " ++ product.name)
+                , class "product-image"
+                ]
+                []
+            , h2 [] [ text product.name ]
+            , p [] [ text ("SKU: " ++ product.sku) ]
+            , p [] [ text ("Price: " ++ toUpper product.price.currencyCode ++ " $" ++ String.fromFloat (toFloat product.price.priceInCents / 100)) ]
+            ]
+        ]
+
+
+viewKeyedProduct : Product -> ( String, Html.Html Msg )
+viewKeyedProduct product =
+    ( product.id, lazy viewProduct product )
+
+
 view : Model -> Html.Html Msg
 view model =
     div []
@@ -151,28 +180,10 @@ view model =
                     p [] [ text "No products found." ]
 
                 else
-                    div [ class "grid" ]
+                    Keyed.node "div"
+                        [ class "grid" ]
                         (List.map
-                            (\product ->
-                                a
-                                    [ href ("https://bellroy.com/" ++ product.canonicalUri)
-                                    , target "_blank"
-                                    , rel "noopener noreferrer"
-                                    , class "card-link"
-                                    ]
-                                    [ article [ class "card" ]
-                                        [ img
-                                            [ src (productImageUrl product)
-                                            , alt ("Image of " ++ product.name)
-                                            , class "product-image"
-                                            ]
-                                            []
-                                        , h2 [] [ text product.name ]
-                                        , p [] [ text ("SKU: " ++ product.sku) ]
-                                        , p [] [ text ("Price: " ++ toUpper product.price.currencyCode ++ " $" ++ String.fromFloat (toFloat product.price.priceInCents / 100)) ]
-                                        ]
-                                    ]
-                            )
+                            viewKeyedProduct
                             products
                         )
         ]
