@@ -18,7 +18,7 @@ jobs:
       # Set up Node.js (required for yarn/npm to install elm-review dependencies)
       - uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a Node.js version compatible with your setup
+          node-version: "20" # Use a Node.js version compatible with your setup
 
       # Install dependencies (assumes elm-review, elm, and elm-format are in package.json)
       - run: yarn --frozen-lockfile # Or use `npm install` if you use npm
@@ -40,4 +40,3 @@ jobs:
           elm_review_config: review # Optional: Path to elm-review config folder
           elm_files: | # Optional: Specify files to review
             src/
-            tests/
